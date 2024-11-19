@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Goals
+{% endblock %}
+
+{% block main %}
+    <div class="mb-3">
+    <h1 class="handwriting-effect" id="title">Goals</h1> 
+    </div>
+    <a href= "/newgoal"><button class="btn btn-primary float-end" type="submit">New Goal</button></a>
+    <div class="mb-3">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Progress Bar</th>
+                <th>%</th>
+                <th>Time Spent</th>
+                <th>Time Goal</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for goalForTable in goalsForTable %}
+                    <tr class="goal-row" data-goal-id="{{goalForTable.goal_id}}">
+                        <td>{{ goalForTable.name }}</td>
+                        <td><progress id="progressBar" value="{{ ((goalForTable.time_spent / goalForTable.time_goal) * 100) | round(2) }}" max="100"></progress></td>
+                        <td>{{ ((goalForTable.time_spent / goalForTable.time_goal) * 100) | round(2) }}%</td>
+                        <td>{{ (goalForTable.time_spent / 3600) | round(2)}}</td>
+                        <td>{{ (goalForTable.time_goal / 3600) | round(0)}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Wait until the document is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleElement = document.getElementById("title");
+
+            //Randomization of title colors
+            const colors = ["blue", "green", "red"]; // Array of colors
+        
+            const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+        
+            titleElement.style.color = colors[randomIndex]; // Set the title color
+
+
+            document.querySelectorAll('.goal-row').forEach(row=> {
+                row.addEventListener('click', function() {
+                    const goalId = this.dataset.goalId;
+
+                    console.log('Sending goal ID:', goalId);
+
+                    fetch('/set_goal_id', {
+                        method:'POST',
+                        headers: {
+                            'Content-type': 'application/json',
+                        },
+                        body: JSON.stringify({goal_id: goalId})
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = '/goal';
+                        } else {
+                            console.error('Error setting goal ID:', response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                })
+            })
+
+        });
+    </script>
+{% endblock %}

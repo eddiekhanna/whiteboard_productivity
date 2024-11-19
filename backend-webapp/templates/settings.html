@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block main %}
+    <div class="mb-3">
+        <h1 class="handwriting-effect" id="title">Settings</h1>
+    </div>
+    <div class="mb-3">
+        <h5>Alarm Preference</h5>
+        <form action="/set_alarm" id="alarmForm" method="POST">
+            <div class="mb-3">
+                <select class="form-control" id="alarmSelect" name="alarmPreference">
+                    <option value="static/alarms/THE SHADE.mp3">THE SHADE</option>
+                    <option value="static/alarms/North.mp3">North</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="mb-3">
+        <h5>Logout</h5>
+        <form action="/logout" method="POST">
+            <div class="mb-3">
+                <button class="btn btn-primary red" type="submit">Log out</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Wait until the document is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleElement = document.getElementById("title");
+            const alarmForm = document.getElementById("alarmForm");
+
+            //Randomization of title colors
+            const colors = ["blue", "green", "red"]; // Array of colors
+            const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+            titleElement.style.color = colors[randomIndex]; // Set the title color
+
+            alarmForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default action (page reload)
+
+                // Get the selected alarm preference
+                const alarmPreference = document.getElementById("alarmSelect").value;
+                
+                // Make a fetch request to /set_alarm
+                fetch('/set_alarm', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ alarmPreference: alarmPreference }) // Send the selected alarm preference
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Alarm selected.');
+                    } else {
+                        console.error('Error:', response.statusText);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

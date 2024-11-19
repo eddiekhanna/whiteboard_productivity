@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Create Goal
+{% endblock %}
+
+{% block main %}
+<h1 class="handwriting-effect" id="title">Create Goal</h1>
+    <form action="/newgoal" method="POST">
+        <h5>Goal Name</h5>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="goalName" placeholder="Goal Name" type="text">
+        </div>
+        <h5>Goal Time</h5>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="goalHours" placeholder="00" type="number">:<input class="form-control mx-auto w-auto" name="goalMinutes" placeholder="00" type="number">:<input class="form-control mx-auto w-auto" name="goalSeconds" placeholder="00" type="number">
+        </div>
+        <h5>Previous Time</h5>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="prevHours" placeholder="00" type="number">:<input class="form-control mx-auto w-auto" name="prevMinutes" placeholder="00" type="number">:<input class="form-control mx-auto w-auto" name="prevSeconds" placeholder="00" type="number">
+        </div>
+        <h5>Description</h5>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="description" placeholder="Description" type="text">
+        </div>
+        <div class="mb-3">
+            <input type="checkbox" name="subgoal">
+            <label for="subgoal">Subgoal</label>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    <script>
+        // Wait until the document is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleElement = document.getElementById("title");
+
+            //Randomization of title colors
+            const colors = ["blue", "green", "red"]; // Array of colors
+        
+            const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+        
+            titleElement.style.color = colors[randomIndex]; // Set the title color
+        
+        });
+    </script>
+{% endblock %}

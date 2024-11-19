@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ subgoalInfo.name }}
+{% endblock %}
+
+{% block main %}
+    <div class="mb-3">
+    <h1 class="handwriting-effect" id="title">{{ subgoalInfo.name }}</h1> 
+    </div>
+    <div class="mb-3">
+        <a href= "/editsubgoal"><button class="btn btn-primary float-end" type="submit">Edit</button></a>
+    </div>
+    <div class="mb-3">
+        <p id="timeSpentText">Time Spent: {{ (subgoalInfo.time_spent / 3600) | round(2) }}</p>
+        <p>Time Goal: {{ (subgoalInfo.time_goal / 3600) | round(0) }}</p>
+        <p>
+            {% if subgoalInfo.time_goal != 0 %}
+                <progress id="progressBar" value="{{ ((subgoalInfo.time_spent / subgoalInfo.time_goal) * 100) | round(2) }}" max="100"></progress>
+            {% else %}
+                 
+            {% endif %}
+        </p>
+        <p>Description: {{ subgoalInfo.description }}</p>
+    </div>
+
+    <script>
+        // Wait until the document is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleElement = document.getElementById("title");
+
+            //Randomization of title colors
+            const colors = ["blue", "green", "red"]; // Array of colors
+        
+            const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+        
+            titleElement.style.color = colors[randomIndex]; // Set the title color
+        
+        });
+    </script>
+{% endblock %}

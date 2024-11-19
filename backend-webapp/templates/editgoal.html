@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit {{ goalName }}
+{% endblock %}
+
+{% block main %}
+    <div class="mb-3">
+        <h1 class="handwriting-effect" id="title">Edit {{ goalName }}</h1>
+    </div>
+
+    <form action="/editgoal" method="POST">
+        <p>Select the amount of time you want to add/subtract to time spent on {{ goalName }}</p>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto number-input-width" name="addedHours" placeholder="00" type="number">:
+            <input class="form-control mx-auto w-auto number-input-width" name="addedMinutes" placeholder="00" type="number">:
+            <input class="form-control mx-auto w-auto number-input-width" name="addedSeconds" placeholder="00" type="number">
+        </div>
+        <p>If you want to edit the goal time for {{ goalName }} do so here. Otherwise leave blank</p>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="newGoalHours" placeholder="00" type="number">:
+            <input class="form-control mx-auto w-auto" name="newGoalMinutes" placeholder="00" type="number">:
+            <input class="form-control mx-auto w-auto" name="newGoalSeconds" placeholder="00" type="number">
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    <script>
+        const titleElement = document.getElementById("title");
+
+        //Randomization of title colors
+        const colors = ["blue", "green", "red"]; // Array of colors
+        
+        const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+        
+        titleElement.style.color = colors[randomIndex]; // Set the title color
+    </script>
+{% endblock %}

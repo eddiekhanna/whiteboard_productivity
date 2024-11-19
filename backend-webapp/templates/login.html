@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <div class="mb-3">
+        <h1 class="handwriting-effect" id="title">Whiteboard Productivity</h1>
+    </div>
+
+    <form action="/login" method="POST">
+        <div class="mb-3">
+            <input autofocus class="form-control mx-auto w-auto" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="mb-3">
+            <input autofocus class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    <script>
+        const titleElement = document.getElementById("title");
+
+        //Randomization of title colors
+        const colors = ["blue", "green", "red"]; // Array of colors
+        
+        const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+        
+        titleElement.style.color = colors[randomIndex]; // Set the title color
+    </script>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Timer
+{% endblock %}
+
+{% block main %}
+<div class="mb-3">
+<h1 class="handwriting-effect" id="title">Whiteboard Productivity</h1>
+</div>
+
+<form class="timer_form" id="timer_form" action="/" method="POST">
+    <div class="mb-3">
+        <select class="form-control" name="goal">
+            {% for option in dropdown %}
+                <option >{{ option.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3 d-flex justify-content-center">
+        <form class="form-inline">
+            <div class="d-flex align-items-center">
+                <input class="form-control mx-1 number-input-width" id="hours" min="0" name="hours" placeholder="00" type="number">:
+                <input class="form-control mx-1 number-input-width" id="minutes" min="0" name="minutes" placeholder="00" type="number">:
+                <input class="form-control mx-1 number-input-width" id="seconds" min="0" name="seconds" placeholder="00" type="number">
+            </div>
+        </form>
+    </div>
+    <div class="mb-3 d-flex justify-content-center">
+        <button class="btn btn-primary" id="start_button" style="display: block;">Start Timer</button>
+        <button class="btn btn-primary" id="stop_button" style="display: none;">Stop Timer</button>
+    </div>
+    <div class="mb-3 d-flex justify-content-center">
+        <audio id="alarmSound" src="{{ alarmPreference }}" preload="auto"></audio>
+        <button class="btn btn-primary" id="submit_button" style="display: none;" type="submit">Save Time</button>
+    </div>
+</form>
+<script>
+    let totalTimeInSeconds;
+    let countdownInterval;
+    let hoursInputField = document.querySelector('#hours');
+    let minutesInputField = document.querySelector('#minutes');
+    let secondsInputField = document.querySelector('#seconds');
+    const alarmSound = document.getElementById('alarmSound');
+    
+    
+    function startCountdown() {
+        // Update the countdown display function
+        countdownInterval = setInterval(() => {
+            if (totalTimeInSeconds > 0) {
+                totalTimeInSeconds--;
+                updateDisplay();
+            } else {
+                clearInterval(countdownInterval); // Stop countdown when it reaches zero
+                alarmSound.play()
+                console.log('Timer completed!');
+                // You can also reset buttons or update UI here
+            }
+        }, 1000); // Run every second (1000 milliseconds)
+    }
+
+    function updateDisplay() {
+        const hours = Math.floor(totalTimeInSeconds / 3600);
+        const minutes = Math.floor((totalTimeInSeconds % 3600) / 60);
+        const seconds = totalTimeInSeconds % 60;
+
+        // Log the values for debugging
+        console.log(`Updating display: ${hours}:${minutes}:${seconds}`);
+    
+        // Log the values for debugging
+        console.log(`Updating display: ${hours}:${minutes}:${seconds}`);
+
+        hoursInputField.value = String(hours).padStart(2, '0');
+        minutesInputField.value = String(minutes).padStart(2, '0');
+        secondsInputField.value = String(seconds).padStart(2, '0');
+    }
+    
+ 
+    // Wait until the document is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        const startButton = document.querySelector('#start_button');
+        const stopButton = document.querySelector('#stop_button');
+        const submitButton = document.querySelector('#submit_button')
+        const goalName = document.querySelector('select[name="goal"]').value;
+        let hours;
+        let minutes;
+        let seconds;
+        const titleElement = document.getElementById("title");
+
+        //Randomization of title colors
+        const colors = ["blue", "green", "red"]; // Array of colors
+        
+        const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+        
+        titleElement.style.color = colors[randomIndex]; // Set the title color
+
+        startButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default action (page reload)
+
+            // Make a fetch request to /start_timer
+            fetch('/start_timer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Timer started.');
+                    
+                    // Show/Hide buttons
+                    startButton.style.display = 'none'; 
+                    stopButton.style.display = 'block';
+                    
+                    // Get input values and calculate total time
+                    hours = Number(hoursInputField.value);
+                    minutes = Number(minutesInputField.value);
+                    seconds = Number(secondsInputField.value);
+                    totalTimeInSeconds = (seconds + (60 * minutes) + (3600 * hours));
+
+                    // Start the countdown
+                    startCountdown();
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+
+        stopButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default action (page reload)
+
+            // Make a fetch request to /stop_timer
+            fetch('/stop_timer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    goalName: goalName
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Timer stopped');
+                    
+                    // Show/Hide buttons
+                    startButton.style.display = 'block';
+                    stopButton.style.display = 'none';
+                    submitButton.style.display = 'block';
+
+                    // Pause alarm sound
+                    alarmSound.pause();
+                    alarmSound.currentTime = 0;
+                    
+                    // Stop countdown
+                    clearInterval(countdownInterval);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+
+        submitButton.addEventListener('click', function() {
+            document.getElementById('timer_form').submit();
+        })
+    });
+</script>
+{% endblock %}

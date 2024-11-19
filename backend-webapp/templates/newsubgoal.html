@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Create Subgoal
+{% endblock %}
+
+{% block main %}
+    <h1 class="handwriting-effect" id="title">Create {{ goalName }} Subgoal</h1>
+    <form action="/newsubgoal" method="POST">
+        <h5>Subgoal Name</h5>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="subgoalName" placeholder="Subgoal Name" type="text">
+        </div>
+        <h5>Subgoal Time</h5>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="subgoalHours" placeholder="00" type="number">:<input class="form-control mx-auto w-auto" name="subgoalMinutes" placeholder="00" type="number">:<input class="form-control mx-auto w-auto" name="subgoalSeconds" placeholder="00" type="number">
+        </div>
+        <h5>Previous Time</h5>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="prevHours" placeholder="00" type="number">:<input class="form-control mx-auto w-auto" name="prevMinutes" placeholder="00" type="number">:<input class="form-control mx-auto w-auto" name="prevSeconds" placeholder="00" type="number">
+        </div>
+        <h5>Description</h5>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="subgoalDescription" placeholder="Description" type="text">
+        </div>
+        <div class="mb-3">
+            <p class="warning">*If you are adding a new subgoal with previous time and it has not already been included in your {{ goalName }} 
+                goal time you will need to "Edit" the previous time correspondingly</p> 
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    <script>
+        // Wait until the document is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleElement = document.getElementById("title");
+
+            //Randomization of title colors
+            const colors = ["blue", "green", "red"]; // Array of colors
+        
+            const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+        
+            titleElement.style.color = colors[randomIndex]; // Set the title color
+        
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,152 @@
+body {
+    font-family: "Comic Sans MS", "Comic Sans" !important;
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+    background-color: #d0c7a6 !important; 
+    height: 100vh; /* Ensure the body takes the full viewport height */
+}
+
+nav {
+    display: flex; /* Use flexbox */
+    align-items: center; /* Align items vertically in the center */
+    height: 60px; /* Set a specific height */
+    background-color: #d0c7a6 !important; /* Beige background */
+    border: none; /* Remove any default border */
+    padding: 0 10px;
+}
+
+.navbar-nav .nav-link {
+    padding: 10px 15px; /* Adjust this value to move the links down */
+    margin-top: 20px; /* This adds space above each link */
+}
+
+.navbar-brand {
+    margin-top: 20px; /* Match the same value used for .nav-link */
+}
+
+
+.whiteboard-wrapper {
+    height: calc(100vh - 90px); /* Adjust height to take up the full viewport minus the navbar height */
+    margin: 20px; /* Space around the whiteboard */
+    padding: 20px; /* Space inside the whiteboard */
+    border: 22px solid black; /* Thicker black border */
+    background-color: white; /* White background for the whiteboard */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Adds depth with a shadow */
+    overflow-y: auto; /* Allows scrolling if content overflows */
+}
+
+.handwriting-effect {
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    width: 0; /* Initially hidden */
+    animation: handwriting 5s steps(40, end) forwards; /* Typing animation */
+    text-align: center;
+    line-height: 1.2; /* Adjust the value to give more vertical space */
+    padding-bottom: 5px; /* Add more padding if needed */
+    margin-bottom: 10px;
+}
+
+/* Typing animation */
+@keyframes handwriting {
+    from { width: 0; }  /* Starts with no text visible */
+    to { width: 100%; } /* Reveals the text */
+}
+
+
+.warning {
+    font-size: smaller;
+}
+
+.timer_form {
+    margin-top: 50px; /* Adjust this value to move the form down */
+}
+
+.number-input-width {
+    width: 60px !important;
+}
+
+
+.year-input-width {
+    width: 100px !important;
+}
+
+.form-control {
+    text-align: center; /* Centers the text */
+    width: auto; /* Adjusts width to fit content */
+    display: inline-block; /* Allows width adjustment to fit content */
+}
+
+#timeSpentText {
+    margin-left: 52px; /* Adjust the value as needed */
+}
+
+
+.subgoal-button-spacing {
+    margin-top: -110px !important; /* Adjust as needed */
+}
+
+.table-spacing {
+    margin-top: 160px !important; /* Adjust as needed */
+}
+
+#legend {
+    text-align: center; /* Center the text inside the legend */
+}
+
+#legend ul {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove default padding */
+    display: inline-flex; /* Use inline-flex to center the entire list horizontally */
+    flex-wrap: wrap; /* Allow items to wrap onto the next line if needed */
+    justify-content: center; /* Center align all items */
+}
+
+#legend li {
+    margin-right: 15px; /* Space between items */
+    margin-left: 15px;
+    display: flex; /* Align items in li horizontally */
+    align-items: center; /* Center align color box and text */
+}
+
+.legend-color {
+    display: inline-block;  /* Make the span behave like a block for width and height */
+    width: 10px;            /* Set the width */
+    height: 10px;           /* Set the height */
+    margin-right: 8px;      /* Space between the square and the task name */
+    vertical-align: middle; /* Aligns the color square with text */
+}
+
+
+#calendarTable {
+    border-collapse: collapse; /* Optional: collapse borders */
+    table-layout: fixed; /* Enforces a fixed layout */
+    width: 100%;
+}
+
+#calendarTable tbody td {
+    position: relative; /* Establish a positioning context for the cell */
+    height: 100px; /* Adjust height as needed */
+    border: 1px solid #ccc; /* Optional border */
+    vertical-align: top; /* Align cell contents to the top */
+}
+
+
+.number {
+    position: absolute; /* Position the number absolutely within the cell */
+    top: 5px; /* Align to the top with a margin */
+    right: 5px; /* Align to the right with a margin */
+    font-size: 14px; /* Adjust size as needed */
+    color: black; /* Change color if needed */
+}
+
+.red {
+    background-color: red;
+    border: 2px solid red; /* Red outline */
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.red:hover {
+    background-color: darkred; /* Darker red on hover */
+    border-color: darkred; /* Darker red outline on hover */
+}

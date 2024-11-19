@@ -1,0 +1,221 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ selectedMonthName }} {{ selectedDayNumber }} Data
+{% endblock %}
+
+{% block main %}
+    <div class="mb-3">
+        <h1 class="handwriting-effect" id="title">{{ selectedMonthName }} {{ selectedDayNumber }}</h1>
+    </div>
+
+    <div id="legend" class="mb-3">
+        <h3>Legend</h3>
+        <ul>
+            {% for goalWithColor in goalsWithColors %}
+            <li>
+                <span class="legend-color" style="background-color: {{ goalWithColor[1] }};"></span> 
+                {{ goalWithColor[0] }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class = "mb-3 pieChartDiv">
+        <canvas id="pieChart" width="400" height="400"></canvas>
+    </div>
+
+    <div class = "mb-3">
+        <canvas id="barChart" width="600" height="200"></canvas>
+    </div>
+
+    
+    <script>
+        const goalsWithLegendColors = {{ goalsWithColors | tojson }};
+        const dayValue = {{ selectedDayNumber | tojson }}
+        
+        // TITLE COLOR CHANGE
+        const titleElement = document.getElementById("title");
+        const colors = ["blue", "green", "red"];
+        const randomIndex = Math.floor(Math.random() * colors.length);
+        titleElement.style.color = colors[randomIndex]; // Set the title color
+
+        fetch('/get_daily_data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({dayValue: dayValue})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.error('Error setting getting daily data:', response.statusText);
+            }
+        })
+        .then(data => {
+            if (data) {
+                
+                const canvas = document.getElementById("pieChart");
+                const canvas1 = document.getElementById("barChart");
+                
+                // Assuming 'data' contains the task information for the day
+                console.log('Daily data:', data);
+                
+                // Call the pie chart drawing function
+                drawPieChart(canvas, data.data, goalsWithLegendColors);
+
+                // Call the bar chart drawing function;
+                drawBarChart(canvas1, data.data, goalsWithLegendColors);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching daily data:', error);
+        });
+
+        function drawPieChart(canvas, data, goalsWithLegendColors) {
+            console.log(goalsWithLegendColors);
+
+            const ctx = canvas.getContext('2d');
+
+            // Define the labels and durations from the data
+            const labels = data.map(item => item.task_name);
+            const durations = data.map(item => item.duration / 3600); // Convert seconds to hours
+
+            // Calculate the total time for the day
+            const totalDuration = durations.reduce((sum, duration) => sum + duration, 0);
+            const maxHours = 24;  // A full day has 24 hours
+
+            // If the total duration is less than 24 hours, add a "Remaining" slice
+            if (totalDuration < maxHours) {
+                labels.push('Remaining');
+                durations.push(maxHours - totalDuration); // The remaining time in the day
+            }
+
+            // Create a mapping of task names to colors based on goalsWithColors
+            const colorMap = {};
+            goalsWithLegendColors.forEach(goalWithLegendColor => {
+                colorMap[goalWithLegendColor[0]] = goalWithLegendColor[1]; // Map task name to its color
+            });
+
+            console.log(colorMap)
+
+            // Determine the background colors for the pie chart
+            const colors = labels.map(label => colorMap[label] || '#CCCCCC');
+
+            // Define the datasets for the pie chart
+            const datasets = [{
+                data: durations,
+                backgroundColor: colors,
+            }];
+
+            // Create the pie chart
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels.length ? labels : ['No Data'],
+                    datasets: datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                    },
+                },
+            });
+        }
+
+        // LOOK HERE
+        // LOOK HERE
+        // LOOK HERE
+        // LOOK HERE
+        function drawBarChart(canvas1, data, goalsWithLegendColors) {
+
+            console.log("Here: ", data);
+            // Prepare arrays for chart labels (hours) and data (task durations per hour)
+            const hours = Array.from({ length: 24 }, (_, i) => i);  // Hours from 0 to 23
+            const taskDurationsPerHour = {};
+
+            // Initialize an empty array for each hour
+            hours.forEach(hour => {
+                taskDurationsPerHour[hour] = {};
+            });
+
+            // Map of task names to colors
+            const colorMap = {};
+            goalsWithLegendColors.forEach(([taskName, color]) => {
+                colorMap[taskName] = color;
+            });
+
+            // Populate task durations per hour
+            data.forEach(entry => {
+                const hour = entry.log_hour;
+                const taskName = entry.task_name;
+                const duration = entry.duration / 60;  // Convert duration to minutes
+
+                if (!taskDurationsPerHour[hour]) {
+                    taskDurationsPerHour[hour] = {};  // Initialize as an empty object if it's undefined
+                }
+                
+                // Add the duration for each task in the respective hour
+                if (!taskDurationsPerHour[hour][taskName]) {
+                    taskDurationsPerHour[hour][taskName] = 0;
+                }
+                taskDurationsPerHour[hour][taskName] += duration;
+            });
+
+            // Prepare datasets for the bar chart
+            const datasets = [];
+
+            // Iterate over each task to create a separate dataset per task
+            goalsWithLegendColors.forEach(([taskName, color]) => {
+                const taskData = hours.map(hour => taskDurationsPerHour[hour][taskName] || 0);
+
+                datasets.push({
+                    label: taskName,
+                    data: taskData,
+                    backgroundColor: color,
+                    borderColor: color,
+                    borderWidth: 1,
+                });
+            });
+
+            // Create a bar chart using Chart.js
+            const ctx = document.getElementById('barChart').getContext('2d');
+            const taskChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: hours.map(h => h + ':00'),  // Label each bar as an hour (0:00 to 23:00)
+                    datasets: datasets,  // Use the datasets prepared earlier
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Duration (minutes)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Hour of Day'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false  // Display the legend to differentiate between tasks
+                        }
+                    }
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
